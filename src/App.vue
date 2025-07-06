@@ -43,6 +43,12 @@ async function createNewFolder() {
   closeContextMenu();
 }
 
+function handleRename() {
+  if (contextFolder.value) {
+    startRename(contextFolder.value);
+  }
+}
+
 async function handleDeleteFolder() {
   console.log("deleteing folder:", contextFolder.value);
 
@@ -197,7 +203,7 @@ watch(searchQuery, async (query) => {
   >
     <ul>
       <li
-        @click="startRename(contextFolder!)"
+        @click="handleRename()"
         class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
       >
         ✏️ Rename

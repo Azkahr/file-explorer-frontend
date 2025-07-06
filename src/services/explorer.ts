@@ -15,8 +15,10 @@ export const createFolder = async (payload: {
 };
 
 export const searchFolders = async (query: string): Promise<Folder[]> => {
-  const res = await api.get<Folder[]>(`/v1/folders/search/${query}`);
-  return res.data;
+  const res = await api.get<{ message: string; data: Folder[] }>(
+    `/v1/folders/search/${query}`,
+  );
+  return res.data.data;
 };
 
 export const renameFolder = async (id: number, newName: string) => {

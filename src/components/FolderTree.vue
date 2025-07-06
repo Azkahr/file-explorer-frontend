@@ -10,8 +10,8 @@ import {
 import type { Folder } from "../types/folder";
 import { useRename } from "../composables/useRename";
 import { useCreateFolder } from "../composables/useCreateFolder";
-import FolderTree from "./FolderTree.vue"; // for recursion
 import { useDeleteFolder } from "../composables/useDeleteFolder";
+import { useContextMenu } from "../composables/useContextMenu";
 
 const props = defineProps<{
   folder: Folder;
@@ -31,7 +31,7 @@ const hasChildren = computed(
 const { editingId, editName, startRename, submitRename } = useRename();
 const { createFolder } = useCreateFolder();
 const { deleteFolder } = useDeleteFolder();
-
+const { registerClose, clear } = useContextMenu();
 const newlyCreatedId = ref<number | null>(null);
 
 function toggleOpen() {
@@ -50,6 +50,9 @@ const contextMenu = ref({ visible: false, x: 0, y: 0 });
 
 function openContextMenu(e: MouseEvent) {
   e.preventDefault();
+
+  registerClose(closeContextMenu);
+
   contextMenu.value = {
     visible: true,
     x: e.clientX,
@@ -59,6 +62,7 @@ function openContextMenu(e: MouseEvent) {
 
 function closeContextMenu() {
   contextMenu.value.visible = false;
+  clear();
 }
 
 async function handleCreateSubfolder() {
@@ -96,6 +100,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("click", closeContextMenu);
 });
+
+defineOptions({ name: "FolderTree" });
 </script>
 
 <template>
@@ -104,7 +110,7 @@ onBeforeUnmount(() => {
     <div
       class="flex items-center gap-1 cursor-pointer select-none py-0.5 px-1 hover:bg-gray-100 rounded"
       :class="{ 'bg-blue-100': props.folder.id === selectedId }"
-      @click.stop="toggleSelect"
+      @click="toggleSelect"
       @contextmenu.prevent="openContextMenu"
     >
       <span

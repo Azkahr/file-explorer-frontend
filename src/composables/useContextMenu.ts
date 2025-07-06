@@ -1,31 +1,21 @@
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { ref } from "vue";
 
-export function useContextMenu<T = unknown>() {
-  const contextTarget = ref<T | null>(null);
-  const contextMenu = ref({ visible: false, x: 0, y: 0 });
+export const currentContext = ref<null | (() => void)>(null);
 
-  function openContextMenu(e: MouseEvent, target: T) {
-    e.preventDefault();
-
-    contextTarget.value = target;
-    contextMenu.value = {
-      visible: true,
-      x: e.clientX,
-      y: e.clientY,
-    };
+export function useContextMenu() {
+  function registerClose(fn: () => void) {
+    if (currentContext.value && currentContext.value !== fn) {
+      currentContext.value(); // close existing menu
+    }
+    currentContext.value = fn;
   }
 
-  function closeContextMenu() {
-    contextMenu.value.visible = false;
+  function clear() {
+    currentContext.value = null;
   }
-
-  onMounted(() => window.addEventListener("click", closeContextMenu));
-  onBeforeUnmount(() => window.removeEventListener("click", closeContextMenu));
 
   return {
-    contextTarget,
-    contextMenu,
-    openContextMenu,
-    closeContextMenu,
+    registerClose,
+    clear,
   };
 }
