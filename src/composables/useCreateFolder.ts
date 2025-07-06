@@ -1,4 +1,3 @@
-// composables/useCreateFolder.ts
 import { ref } from "vue";
 import { createFolder as createFolderApi } from "../services/explorer";
 import type { Folder } from "../types/folder";

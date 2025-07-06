@@ -20,7 +20,6 @@ module.exports = {
   ],
   plugins: ["vue", "@typescript-eslint"],
   rules: {
-    // bebas custom
     "vue/multi-word-component-names": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "prettier/prettier": ["error", { endOfLine: "auto" }],
